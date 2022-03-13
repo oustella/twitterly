@@ -33,8 +33,12 @@ class HomeTableViewController: UITableViewController {
         } else {
             // Fallback on earlier versions
         }
-        
-        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        loadTweets()
+        print("calling viewdidappear")
     }
     
     @objc func loadTweets(){
@@ -89,6 +93,12 @@ class HomeTableViewController: UITableViewController {
         if let imageData = data {
             cell.profileImage.image = UIImage(data: imageData)
         }
+        
+        cell.setFavorite(tweetArray[indexPath.row]["favorited"] as! Bool)
+        cell.tweetId = tweetArray[indexPath.row]["id"] as! Int
+        cell.heartButton.setTitle("", for:  UIControl.State.normal)
+        cell.setRetweet(tweetArray[indexPath.row]["retweeted"] as! Bool)
+        cell.retweetButton.setTitle("", for: UIControl.State.normal)
         return cell
     }
 
@@ -97,6 +107,8 @@ class HomeTableViewController: UITableViewController {
         UserDefaults.standard.set(false, forKey: "userLoggedIn")
         self.dismiss(animated: true, completion: nil)
     }
+    
+    
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
