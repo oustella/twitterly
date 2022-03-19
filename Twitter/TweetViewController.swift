@@ -8,16 +8,40 @@
 
 import UIKit
 
-class TweetViewController: UIViewController {
+class TweetViewController: UIViewController, UITextViewDelegate {
     
     var homeVC = HomeTableViewController()
     
     @IBOutlet weak var userTweetText: UITextView!
+    @IBOutlet weak var tweetCount: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         userTweetText.becomeFirstResponder()
+        userTweetText.delegate = self
+        
+        userTweetText.layer.cornerRadius = 10
+        userTweetText.layer.borderWidth = 1
+        userTweetText.layer.borderColor = UIColor.gray.cgColor
+        tweetCount.text = String("0")
+        
+//        let twitterBlueColor = UIColor(red: 29, green: 161, blue: 242, alpha: 0)
+//        if #available(iOS 13.0, *) {
+//            let appearance = UINavigationBarAppearance()
+//            appearance.configureWithOpaqueBackground()
+//            appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+//            appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+//            appearance.backgroundColor = twitterBlueColor
+//            navigationItem.standardAppearance = appearance
+//            navigationItem.scrollEdgeAppearance = navigationItem.standardAppearance
+//
+//        } else {
+//            // Fallback on earlier versions
+//            UINavigationBar.appearance().barTintColor = twitterBlueColor
+//        }
     }
+    
+
     
     @IBAction func cancelTweet(_ sender: Any) {
         dismiss(animated: true)
@@ -38,6 +62,18 @@ class TweetViewController: UIViewController {
             self.dismiss(animated: true, completion: nil)
         }
 
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        let charLimit = 140
+        let newText = NSString(string: textView.text!).replacingCharacters(in: range, with: text)
+        return newText.count <= charLimit
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        let charCount = userTweetText.text.count
+        tweetCount.text = String("\(charCount)")
+        tweetCount.textColor = charCount > 130 ? UIColor.red : UIColor.black
     }
     /*
     // MARK: - Navigation

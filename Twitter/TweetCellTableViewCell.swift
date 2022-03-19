@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AlamofireImage
 
 class TweetCellTableViewCell: UITableViewCell {
     
@@ -19,6 +20,9 @@ class TweetCellTableViewCell: UITableViewCell {
     
     @IBOutlet weak var heartButton: UIButton!
     @IBOutlet weak var retweetButton: UIButton!
+    
+    @IBOutlet weak var tweetImage: UIImageView!
+    
     // actions when tapping the heart button
     // send heart state update to Twitter API
     @IBAction func heartButtonAction(_ sender: Any) {
@@ -84,6 +88,14 @@ class TweetCellTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
+    }
+    
+    // Source: https://medium.com/ios-seminar/why-we-use-dequeuereusablecellwithidentifier-ce7fd97cde8e
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        tweetImage.af_cancelImageRequest() // this should send a message to your download handler and have it cancelled.
+        tweetImage.image = nil
     }
 
 }

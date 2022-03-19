@@ -19,20 +19,10 @@ class HomeTableViewController: UITableViewController {
         loadTweets()
         myRefreshControl.addTarget(self, action: #selector(loadTweets), for: .valueChanged)
         tableView.refreshControl = myRefreshControl
-        
-        let twitterBlueColor = UIColor(red: 29, green: 161, blue: 242, alpha: 0)
-        if #available(iOS 13.0, *) {
-            let appearance = UINavigationBarAppearance()
-            appearance.configureWithOpaqueBackground()
-            appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-            appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-            appearance.backgroundColor = twitterBlueColor
-            navigationItem.standardAppearance = appearance
-            navigationItem.scrollEdgeAppearance = navigationItem.standardAppearance
 
-        } else {
-            // Fallback on earlier versions
-        }
+//        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 80
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -93,7 +83,19 @@ class HomeTableViewController: UITableViewController {
         if let imageData = data {
             cell.profileImage.image = UIImage(data: imageData)
         }
-        
+//        Add user tweet image. Code is working. Couldn't get autoresizing work.
+        let entities = tweetArray[indexPath.row]["entities"] as! NSDictionary
+        if entities["media"] != nil {
+            let media = entities["media"] as! [NSDictionary]
+            let mediaAddress = media[0]["media_url"] as! String
+            let mediaURL = URL(string: mediaAddress)
+            let data = try? Data(contentsOf: mediaURL!)
+            if let mediaData = data {
+                cell.tweetImage.image = UIImage(data: mediaData)
+            }
+        }
+
+
         cell.setFavorite(tweetArray[indexPath.row]["favorited"] as! Bool)
         cell.tweetId = tweetArray[indexPath.row]["id"] as! Int
         cell.heartButton.setTitle("", for:  UIControl.State.normal)
@@ -117,5 +119,10 @@ class HomeTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tweetArray.count
     }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
+    }
 
+    
 }
